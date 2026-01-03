@@ -1,5 +1,5 @@
 
-# RecipeApp — Android (Kotlin | Jetpack Compose)
+# RecipeApp — Android (Kotlin | Jetpack Compose) {apk file available}
 
 A **clean, beginner-to-intermediate Android application** built with **Kotlin** and **Jetpack Compose**, demonstrating **core Android fundamentals** such as API integration, state management, navigation, and modern UI development using **Material 3**.
 
