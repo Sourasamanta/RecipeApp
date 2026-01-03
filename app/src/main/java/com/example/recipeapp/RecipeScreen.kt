@@ -23,55 +23,82 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.MaterialTheme
 
 
+    @Composable
+    fun RecipeScreen(
+        viewState: MainViewModel.RecipeState,
+        navigateToDetail: (Category) -> Unit
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            when {
+                viewState.loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
 
-@Composable
-fun RecipeScreen(modifier: Modifier = Modifier,
-                 viewState: MainViewModel.RecipeState,
-                 navigateToDetail: (Category) -> Unit){
-    val recipeViewModel : MainViewModel = viewModel()
-    val viewstate by recipeViewModel.categoriesState
+                viewState.error != null -> {
+                    Text(
+                        text = "Error: ${viewState.error}",
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
 
-    Box(modifier = Modifier.fillMaxSize()){
-        when{
-            viewstate.loading ->{
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center))
+                else -> {
+                    CategoryScreen(
+                        categories = viewState.list,
+                        navigateToDetail = navigateToDetail
+                    )
+                }
             }
-
-            viewstate.error != null ->{
-                Text(
-                    text = "Error: ${viewstate.error}",
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.Red
+        }
+    }
+    @Composable
+    fun CategoryScreen(
+        categories: List<Category>,
+        navigateToDetail: (Category) -> Unit
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(categories) { category ->
+                CategoryItem(
+                    category = category,
+                    navigateToDetail = navigateToDetail
                 )
-
-            }
-
-            else -> {
-                CategoryScreen(categories = viewstate.list, navigateToDetail)
-            }
-        }
-    }
-    }
-
-    @Composable
-    fun CategoryScreen(categories: List<Category>, navigateToDetail: (Category) -> Unit){
-        LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.fillMaxSize()){
-            items(categories){
-                category ->
-                CategoryItem(category = category, navigateToDetail)
             }
         }
     }
 
     @Composable
-    fun CategoryItem(category: Category, navigateToDetail: (Category) -> Unit = {}){
-        Column(modifier = Modifier.padding(8.dp).fillMaxSize().clickable{ navigateToDetail(category) }, horizontalAlignment = Alignment.CenterHorizontally){
-            Image(painter = rememberAsyncImagePainter(category.strCategoryThumb), contentDescription = null, modifier = Modifier.fillMaxSize().aspectRatio(1f))
-            Text(text = category.strCategory, color = Color.Black, style = TextStyle(fontWeight = FontWeight.Bold), modifier = Modifier.padding(top=4.dp))
+    fun CategoryItem(
+        category: Category,
+        navigateToDetail: (Category) -> Unit
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .clickable { navigateToDetail(category) },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(category.strCategoryThumb),
+                contentDescription = null,
+                modifier = Modifier
+                    .aspectRatio(1f)
+            )
 
+            Text(
+                text = category.strCategory,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 

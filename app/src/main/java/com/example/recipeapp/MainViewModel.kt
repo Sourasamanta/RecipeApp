@@ -1,32 +1,34 @@
 package com.example.recipeapp
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
+class MainViewModel : ViewModel() {
 
-class MainViewModel : ViewModel(){
+    private val _categoriesState = mutableStateOf(RecipeState())
+    val categoriesState: State<RecipeState> = _categoriesState
 
-    private val _categorieState = mutableStateOf(RecipeState())
-    val categoriesState: State<RecipeState> = _categorieState
-
-    init{
+    init {
         fetchCategories()
     }
 
-    private fun fetchCategories(){
+    private fun fetchCategories() {
         viewModelScope.launch {
             try {
-            val response = recipeService.getCategories()
-                _categorieState.value = _categorieState.value.copy(
+                val response = recipeService.getCategories()
+                _categoriesState.value = _categoriesState.value.copy(
                     list = response.categories,
                     loading = false,
                     error = null
                 )
-            }catch (e: Exception){
-                _categorieState.value = _categorieState.value.copy(loading = false, error = e.message)
+            } catch (e: Exception) {
+                _categoriesState.value = _categoriesState.value.copy(
+                    loading = false,
+                    error = e.message
+                )
             }
         }
     }

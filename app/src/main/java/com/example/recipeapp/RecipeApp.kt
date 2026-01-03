@@ -9,26 +9,35 @@ import androidx.navigation.compose.composable
 
 @Composable
 fun RecipeApp(navController: NavHostController) {
+
     val recipeViewModel: MainViewModel = viewModel()
     val viewState by recipeViewModel.categoriesState
 
     NavHost(
         navController = navController,
         startDestination = Screen.RecipeScreen.route
-    ){
+    ) {
         composable(Screen.RecipeScreen.route) {
             RecipeScreen(
                 viewState = viewState,
                 navigateToDetail = { category ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set("category", category)
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("category", category)
+
                     navController.navigate(Screen.CategoryDetailScreen.route)
                 }
             )
         }
+
         composable(Screen.CategoryDetailScreen.route) {
-            val category = navController.previousBackStackEntry?.savedStateHandle?.get<Category>("category")?: Category("", "", "", "")
+            val category =
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.get<Category>("category")
+                    ?: Category("", "", "", "")
+
             CategoryDetailScreen(category = category)
-        
         }
     }
 }
